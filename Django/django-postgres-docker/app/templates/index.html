@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+{% include 'head.html' %}
+
+
+<body>
+    {% include 'navbar.html' %}
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow text-center">
+                    <div class="card-body p-5">
+                        <h3 class="card-title">¡Hola, {{ usuario.nombre }}!</h3>
+                        <p class="card-text">Bienvenido a la aplicación. Aquí puedes navegar entre las funciones
+                            disponibles.</p>
+                        {% if usuario.rol == 1 %}
+                        <a href="/dashboard" class="btn btn-success mb-2">Ir al Dashboard</a>
+                        {% endif %}
+                        <a href="/pokemon" class="btn btn-primary mb-2">Ver Pokemon</a>
+                        <a href="/perfil" class="btn btn-warning mb-2">Mi Perfil</a>
+                        <div class="d-flex mt-2 justify-content-center">
+                            <a href="/logout" class="btn btn-danger">Cerrar sesión</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

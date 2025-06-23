@@ -1,0 +1,85 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+   
+    {% include 'head.html' %}
+  
+<body>
+    {% include 'navbar.html' %}
+
+    <div class="container mt-4">
+        <div class="row">
+            {% for wp in wallpapers %}
+            <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-3">
+                <div class="card h-100 shadow" style="max-width: 160px; margin: 0 auto;">
+                    <img src="{{ wp.src.medium }}" class="card-img-top" alt="{{ wp.photographer }}" style="height:110px; object-fit:cover;">
+                    <div class="card-body text-center p-2">
+                        <h6 class="card-title mb-2" style="font-size: 0.95rem;">Fotógrafo: {{ wp.photographer }}</h6>
+                        <a href="{{ wp.src.original }}" target="_blank" class="btn btn-success btn-sm mb-1">Ver original</a>
+                        <a href="#" class="btn btn-primary btn-sm mb-1 download-btn" data-img="{{ wp.src.original }}" title="Descargar">
+                            <i class="bi bi-arrow-down-circle"></i>
+                        </a>
+
+                        {% if usuario %}
+                        <button class="btn btn-warning btn-sm mb-1 wallpaper-fav-btn"
+                            data-id="{{ wp.id }}">
+                            <i class="bi bi-star"></i> Favoritos
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <p class="text-center">No se encontraron wallpapers.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.download-btn').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const url = btn.getAttribute('data-img');
+            const fileName = url.split('/').pop().split('?')[0];
+            fetch(url)
+                .then(resp => resp.blob())
+                .then(blob => {
+                    const link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = fileName;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                });
+        });
+    });
+});
+</script>
+<script>
+document.querySelectorAll('.wallpaper-fav-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        fetch("{% url 'toggle_wallpaper_favorito' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: new URLSearchParams({
+                wallpaper_id: btn.dataset.id
+            })
+        })
+        .then(resp => resp.json())
+        .then(data => {
+            if (data.success) {
+                // Opcional: Cambia el color del botón o muestra mensaje
+            }
+        });
+    });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,86 @@
+{% load static %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light w-100 mb-4" >
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center" href="{% url 'index' %}">
+            <img src="{% static 'media/gallery.png' %}" alt="Gallery" style="width:30px; height:auto; margin-right:8px;">
+            Wallpapers Gallery
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mb-2 mb-lg-0 ms-lg-4">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'index' %}">Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'wallpapers' %}">Wallpapers</a>
+                </li>
+                {% if usuario and usuario.rol == 1 %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+                </li>
+                {% endif %}
+            </ul>
+            <form class="d-flex ms-auto me-2" method="GET" action="{% url 'wallpapers' %}">
+                <input class="form-control me-2" type="search" name="search" placeholder="Buscar wallpapers..." aria-label="Search" value="{{ request.GET.search }}">
+                <button class="btn btn-outline-primary" type="submit">Buscar</button>
+            </form>
+
+            {% if usuario %}
+                <span class="navbar-text me-2">
+                    👤 {{ usuario.nombre }}
+                </span>
+                <a class="btn btn-outline-info ms-2" href="{% url 'perfil' %}">Mi Perfil</a>
+                <a class="btn btn-outline-danger ms-2" href="{% url 'logout' %}">Cerrar sesión</a>
+            {% else %}
+                <button class="btn btn-outline-success ms-2" data-bs-toggle="modal" data-bs-target="#login">Iniciar Sesión</button>
+                <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#registro">Registrarse</button>
+            {% endif %}
+        </div>
+    </div>
+    <!-- Botón Dark Mode -->
+<button id="darkModeToggle" class="btn btn-outline-secondary ms-2" title="Cambiar modo">
+  <span id="darkModeIcon" class="bi bi-moon"></span>
+</button>
+
+</nav>
+
+{% include 'login.html' %}
+{% include 'registro.html' %}
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const toggle = document.getElementById('darkModeToggle');
+    const icon = document.getElementById('darkModeIcon');
+    const body = document.body;
+    const navbar = document.querySelector('.navbar');
+
+    // Cargar preferencia previa
+    if (localStorage.getItem('darkMode') === 'true') {
+        body.classList.add('bg-dark', 'text-light');
+        if(navbar) navbar.classList.add('navbar-dark', 'bg-dark');
+        icon.classList.remove('bi-moon');
+        icon.classList.add('bi-sun');
+    }
+
+    toggle.addEventListener('click', function() {
+        body.classList.toggle('bg-dark');
+        body.classList.toggle('text-light');
+        if(navbar) navbar.classList.toggle('navbar-dark');
+        if(navbar) navbar.classList.toggle('bg-dark');
+        if (icon.classList.contains('bi-moon')) {
+            icon.classList.remove('bi-moon');
+            icon.classList.add('bi-sun');
+            localStorage.setItem('darkMode', 'true');
+        } else {
+            icon.classList.remove('bi-sun');
+            icon.classList.add('bi-moon');
+            localStorage.setItem('darkMode', 'false');
+        }
+    });
+});
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
