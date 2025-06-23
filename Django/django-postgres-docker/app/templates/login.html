@@ -1,57 +1,64 @@
 {% load static %}
+<!DOCTYPE html>
+<html lang="es">
+    {% include 'head.html' %}
+<body>
+{% block content %}
+<section class="h-100 gradient-form" >
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-xl-10">
+        <div class="card rounded-3 text-black shadow">
+          <div class="row g-0">
+            <div class="col-lg-6">
+              <div class="card-body p-md-5 mx-md-4">
 
-<!-- Puedes poner esto al final de base.html o como login_modal.html -->
-<div class="modal fade" id="login" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-body p-0">
-        <div class="row g-0">
-          <div class="col-lg-6 d-flex align-items-center">
-            <div class="card-body p-4 mx-md-3 w-100">
+                <div class="text-center">
+                  <img src="{% static 'media/gallery.png' %}" style="width: 120px;" alt="logo">
+                  <h4 class="mt-2 mb-4 pb-1">Iniciar Sesión</h4>
+                </div>
 
-              <div class="text-center mb-3">
-                <img src="{% static 'media/gallery.png' %}" style="width: 80px;" alt="logo">
-                <h4 class="mt-2 mb-3 pb-1">Bienvenido</h4>
-              </div>
-
-              <form method="post" action="{% url 'login' %}">
-                {% csrf_token %}
-                <p class="mb-2">Por favor, inicia sesión en tu cuenta</p>
-                {% if messages %}
+                <form method="post">
+                  {% csrf_token %}
+                  {% if messages %}
                   {% for message in messages %}
-                    <div class="alert alert-info py-1">{{ message }}</div>
+                  <div class="alert alert-info py-1 my-2">{{ message }}</div>
                   {% endfor %}
-                {% endif %}
-                <div class="form-outline mb-2">
-                  <input type="text" name="correo" class="form-control" placeholder="Correo electrónico" required>
-                  <label class="form-label" for="correo">Correo electrónico</label>
-                </div>
-                <div class="form-outline mb-2">
-                  <input type="password" name="contraseña" class="form-control" placeholder="Contraseña" required>
-                  <label class="form-label" for="contraseña">Contraseña</label>
-                </div>
-                <div class="text-center pt-1 mb-2 pb-1">
-                  <button class="btn btn-primary btn-block fa-lg gradient-custom-2 mb-2" type="submit">Iniciar Sesión</button>
-                </div>
-                <div class="d-flex align-items-center justify-content-center pb-2">
-                  <span class="mb-0 me-2">¿Aún no tienes una cuenta?</span>
-                  <button class="btn btn-outline-success btn-sm ms-2" data-bs-toggle="modal" data-bs-target="#registro" data-bs-dismiss="modal">Regístrate</button>
-                </div>
-              </form>
+                  {% endif %}
 
+                  <div class="form-outline mb-4">
+                    <input type="email" name="correo" id="correo" class="form-control" placeholder="Ingresa tu correo" required>
+                    <label class="form-label" for="correo">Correo electrónico</label>
+                  </div>
+                  <div class="form-outline mb-4">
+                    <input type="password" name="contraseña" id="contraseña" class="form-control" placeholder="Ingresa tu contraseña" required>
+                    <label class="form-label" for="contraseña">Contraseña</label>
+                  </div>
+                  <div class="text-center pt-1 mb-4">
+                    <input type="submit" class="btn btn-primary btn-block gradient-custom-2 mb-3" value="Iniciar Sesión">
+                  </div>
+                  <div class="d-flex align-items-center justify-content-center pb-2">
+                    <p class="mb-0 me-2">¿No tienes cuenta?</p>
+                    <a href="{% url 'registro' %}" class="btn btn-outline-success">Regístrate</a>
+                  </div>
+                </form>
+
+              </div>
             </div>
-          </div>
-          <div class="col-lg-6 d-flex align-items-center justify-content-center" style="background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); border-radius: 0 0.5rem 0.5rem 0;">
-            <div class="text-white px-2 py-3 p-md-3 mx-md-2 text-center">
-              <h5 class="mb-2">¡Bienvenido a la Galería!</h5>
-              <p class="small mb-0">
-                Explora y comparte los mejores wallpapers.<br>
-                Inicia sesión para acceder a todas las funciones.
-              </p>
+            <div class="col-lg-6 d-flex align-items-center gradient-custom-2" style="background: linear-gradient(135deg, #7b2ff2 0%, #f357a8 100%); border-radius: 0 0.5rem 0.5rem 0;">
+              <div class="text-white px-3 py-4 p-md-5 mx-md-4">
+                <h4 class="mb-4">Bienvenido de nuevo a Wallpapers Gallery</h4>
+                <p class="small mb-0">
+                  Accede a tu cuenta para gestionar tus fondos de pantalla favoritos y descubrir nuevas imágenes cada día.
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+</section>
+{% endblock %}
+</body>
+</html>

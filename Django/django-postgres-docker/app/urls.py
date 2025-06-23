@@ -14,8 +14,6 @@ urlpatterns = [
     path('registrar-usuario/', views.registrar_usuario, name='registrar_usuario'),
     path('logout/', views.logout, name='logout'),
     path('perfil/', views.perfil, name='perfil'),
-    path('pokemon/<int:poke_id>/', views.pokemon_detalle, name='pokemon_detalle'),
-    path('toggle-favorito/', views.toggle_favorito, name='toggle_favorito'),
     path('wallpapers/', views.wallpapers, name='wallpapers'),
    path('toggle-wallpaper-favorito/<int:wallpaper_id>/', views.toggle_wallpaper_favorito, name='toggle_wallpaper_favorito'),
     # Administradores

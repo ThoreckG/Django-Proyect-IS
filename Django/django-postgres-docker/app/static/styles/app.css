@@ -1,7 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap');
 
-
-
 * {
   margin: 0;
   padding: 0;
@@ -9,77 +7,13 @@
   font-family: 'Poppins', sans-serif;
 }
 
-:root{
-  --normal: #A8A77A;
-  --fire: #EE8130;
-  --water: #6390F0;
-  --electric: #F7D02C;
-  --grass: #7AC74C;
-  --ice: #96D9D6;
-  --fighting: #C22E28;
-  --poison: #A33EA1;
-  --ground: #E2BF65;
-  --flying: #A98FF3;
-  --psychic: #F95587;
-  --bug: #A6B91A;
-  --rock: #B6A136;
-  --ghost: #735797;
-  --dragon: #6F35FC;
-  --dark: #705746;
-  --steel: #B7B7CE;
-  --fairy: #D685AD;
-}
 
 body,
 html {
   height: 100%;
 }
 
-body {
-  background-color: #9e69f5;
-}
 
-body.dark-mode {
-  background-color: #121212;
-  color: white;
-}
-
-.dark-mode .card,
-.dark-mode .table {
-  background-color: #1e1e1e;
-  color: white;
-}
-
-.dark-mode .table-striped>tbody>tr:nth-of-type(odd) {
-  background-color: #2c2c2c;
-}
-
-.dark-mode .table-dark th {
-  background-color: #333;
-}
-
-.botones-paginacion{
-  display: flex;
-  justify-content: right;
-  padding: 2rem;
-  gap: 2rem;
-}
-
-.botones-pokemon-grid {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: center;
-  align-items: center;
-}
-
-.pokemon-link {
-  transition: transform 0.2s cubic-bezier(0.4,0,0.2,1);
-  display: block;
-}
-
-.pokemon-link:hover {
-  transform: scale(0.97);
-}
 
 nav.navbar {
     position: static !important;
@@ -93,3 +27,92 @@ body {
     display: block !important;
 }
 
+/* Cambia el fondo de los modals en dark mode */
+body.bg-dark .modal-content {
+  background-color: #23272b !important;
+  color: #fff !important;
+}
+body.bg-dark .modal-header,
+body.bg-dark .modal-footer {
+  border-color: #444 !important;
+}
+body.bg-dark .form-control {
+  background-color: #343a40 !important;
+  color: #fff !important;
+  border-color: #555 !important;
+}
+body.bg-dark .form-label {
+  color: #ccc !important;
+}
+body.bg-dark .form-control:disabled, 
+body.bg-dark .form-control[readonly] {
+  background-color: #343a40 !important;
+  color: #fff !important;
+  opacity: 1 !important;
+}
+
+/* Modo oscuro para el contenedor principal y las cartas */
+body.bg-dark .main-container,
+body.bg-dark .perfil-container {
+    background-color: #23272b !important;
+    color: #f1f1f1 !important;
+}
+
+body.bg-dark .wallpaper-card,
+body.bg-dark .card,
+body.bg-dark .favorito-card {
+    background-color: #2c3136 !important;
+    color: #f1f1f1 !important;
+    border-color: #444 !important;
+}
+
+body.bg-dark .wallpaper-card .btn,
+body.bg-dark .card .btn,
+body.bg-dark .favorito-card .btn {
+    /* Opcional: mejora contraste de botones en modo oscuro */
+    border-color: #888;
+}
+
+body.bg-dark .wallpaper-card .btn-success,
+body.bg-dark .card .btn-success {
+    background-color: #198754;
+    color: #fff;
+}
+
+body.bg-dark .wallpaper-card .btn-danger,
+body.bg-dark .card .btn-danger {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.favorito-indicador {
+  z-index: 2;
+  background: rgba(255,255,255,0.85);
+  border-radius: 50%;
+  padding: 0.2em 0.4em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+body {
+  background-color: #5b4cb1;
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M50 0l50 28.9v57.8L50 115.6 0 86.7V28.9L50 0z'/%3E%3C/g%3E%3C/svg%3E");
+  animation: scrollHex 60s linear infinite;
+  background-size: 100px 100px;
+}
+
+@keyframes scrollHex {
+  0% { background-position: 0 0; }
+  100% { background-position: 1000px 1000px; }
+}
+
+
+.card:hover {
+    transform: translateY(-6px) scale(1.04);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18), 0 1.5px 4px rgba(0,0,0,0.15);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}

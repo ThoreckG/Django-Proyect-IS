@@ -28,18 +28,18 @@ def admin_requerido(vista_func):
         usuario = Usuario.objects.get(id=usuario_id)
         if usuario.rol != 1:
             messages.error(request, "No tienes permisos para acceder a esta página.")
-            return redirect('wallpapers')
+            return redirect('index')
         return vista_func(request, *args, **kwargs)
     return wrapper
 
 @login_requerido
 def index(request):
     usuario = Usuario.objects.get(id=request.session['usuario_id'])
-    return render(request, 'wallpaper.html', {'usuario': usuario})
+    return render(request, 'index.html', {'usuario': usuario})
 
 def logout(request):
     request.session.flush()
-    return redirect('wallpapers')
+    return redirect('login')
 
 def registro(request):
     if request.method == 'POST':
@@ -93,34 +93,6 @@ def dashboard(request):
         'usuarios_normales': usuarios_normales,
     })
 
-@login_requerido
-def pokemon(request):
-    usuario = Usuario.objects.get(id=request.session['usuario_id'])
-    offset = int(request.GET.get('offset', 0))
-    response = requests.get(f'https://pokeapi.co/api/v2/pokemon?limit=20&offset={offset}')
-    pokemon_list = []
-    next_offset = prev_offset = None
-    if response.status_code == 200:
-        data = response.json()
-        for poke in data['results']:
-            poke_data = requests.get(poke['url']).json()
-            pokemon_list.append({
-                'name': poke_data['name'],
-                'image': poke_data['sprites']['front_default'],
-                'types': [t['type']['name'] for t in poke_data['types']],
-                'id': poke_data['id'],
-            })
-        # Manejo de paginación
-        if data['next']:
-            next_offset = offset + 20
-        if data['previous']:
-            prev_offset = max(offset - 20, 0)
-    return render(request, 'pokemon_dashboard.html', {
-        'usuario': usuario,
-        'pokemon': pokemon_list,
-        'next_offset': next_offset,
-        'prev_offset': prev_offset,
-    })
 
 @login_requerido
 @admin_requerido
@@ -142,35 +114,6 @@ def registrar_usuario(request):
             messages.success(request, "Usuario registrado correctamente.")
             return redirect('dashboard')
     return render(request, 'registrar_usuario.html')
-
-@login_requerido
-def pokemon_detalle(request, poke_id):
-    usuario = Usuario.objects.get(id=request.session['usuario_id'])
-    response = requests.get(f'https://pokeapi.co/api/v2/pokemon/{poke_id}')
-    if response.status_code == 200:
-        poke = response.json()
-    else:
-        poke = None
-    return render(request, 'pokemon.html', {'usuario': usuario, 'poke': poke})
-
-@login_requerido
-@require_POST
-def toggle_favorito(request):
-    usuario = Usuario.objects.get(id=request.session['usuario_id'])
-    poke_id = request.POST.get('poke_id')
-    if not poke_id:
-        return JsonResponse({'success': False, 'error': 'No se proporcionó poke_id.'})
-
-    favoritos = usuario.favoritos or []
-    if poke_id in favoritos:
-        favoritos.remove(poke_id)
-        action = 'removed'
-    else:
-        favoritos.append(poke_id)
-        action = 'added'
-    usuario.favoritos = favoritos
-    usuario.save()
-    return JsonResponse({'success': True, 'action': action})
 
 # Vistas de Administradores
 
