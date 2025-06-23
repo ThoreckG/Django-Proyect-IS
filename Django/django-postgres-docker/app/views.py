@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import Usuario, Equipo
@@ -7,6 +8,8 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.http import JsonResponse
 import requests
+from django.conf import settings
+import os
 
 def login_requerido(vista_func):
     @wraps(vista_func)
@@ -141,45 +144,6 @@ def registrar_usuario(request):
     return render(request, 'registrar_usuario.html')
 
 @login_requerido
-def perfil(request):
-    usuario = Usuario.objects.get(id=request.session['usuario_id'])
-    favoritos_data = []
-    for poke_id in usuario.favoritos:
-        response = requests.get(f'https://pokeapi.co/api/v2/pokemon/{poke_id}')
-        if response.status_code == 200:
-            poke = response.json()
-            favoritos_data.append({
-                'id': poke['id'],
-                'name': poke['name'],
-                'image': poke['sprites']['front_default'],
-                'types': [t['type']['name'] for t in poke['types']],
-            })
-
-    equipos_data = []
-    for equipo in usuario.equipos.all():
-        pokemones = []
-        for poke_id in equipo.pokemones:
-            response = requests.get(f'https://pokeapi.co/api/v2/pokemon/{poke_id}')
-            if response.status_code == 200:
-                poke = response.json()
-                pokemones.append({
-                    'id': poke['id'],
-                    'name': poke['name'],
-                    'image': poke['sprites']['front_default'],
-                    'types': [t['type']['name'] for t in poke['types']],
-                })
-        equipos_data.append({
-            'nombre': equipo.nombre,
-            'pokemones': pokemones,
-        })
-
-    return render(request, 'perfil.html', {
-        'usuario': usuario,
-        'favoritos': favoritos_data,
-        'equipos': equipos_data,
-    })
-
-@login_requerido
 def pokemon_detalle(request, poke_id):
     usuario = Usuario.objects.get(id=request.session['usuario_id'])
     response = requests.get(f'https://pokeapi.co/api/v2/pokemon/{poke_id}')
@@ -188,53 +152,6 @@ def pokemon_detalle(request, poke_id):
     else:
         poke = None
     return render(request, 'pokemon.html', {'usuario': usuario, 'poke': poke})
-
-@login_requerido
-@require_POST
-def agregar_a_equipo(request):
-    usuario = Usuario.objects.get(id=request.session['usuario_id'])
-    poke_id = request.POST.get('poke_id')
-    equipo_id = request.POST.get('equipo_id')
-    nuevo_equipo = request.POST.get('nuevo_equipo', '').strip()
-
-    # Si el usuario quiere crear un nuevo equipo
-    if nuevo_equipo:
-        equipo = Equipo.objects.create(usuario=usuario, nombre=nuevo_equipo, pokemones=[poke_id])
-        return JsonResponse({'success': True, 'equipo': equipo.nombre})
-
-    # Si seleccionó un equipo existente
-    if equipo_id:
-        try:
-            equipo = Equipo.objects.get(id=equipo_id, usuario=usuario)
-            if poke_id in equipo.pokemones:
-                return JsonResponse({'success': False, 'error': 'Este Pokémon ya está en el equipo.'})
-            if len(equipo.pokemones) >= 6:
-                return JsonResponse({'success': False, 'error': 'El equipo ya tiene 6 Pokémon.'})
-            equipo.pokemones.append(poke_id)
-            equipo.save()
-            return JsonResponse({'success': True, 'equipo': equipo.nombre})
-        except Equipo.DoesNotExist:
-            return JsonResponse({'success': False, 'error': 'Equipo no encontrado.'})
-
-    return JsonResponse({'success': False, 'error': 'No se seleccionó equipo.'})
-
-@login_requerido
-@require_POST
-def cambiar_nombre_equipo(request):
-    equipo_id = request.POST.get('equipo_id')
-    nuevo_nombre = request.POST.get('nuevo_nombre')
-    equipo = Equipo.objects.get(nombre=equipo_id, usuario__id=request.session['usuario_id'])
-    equipo.nombre = nuevo_nombre
-    equipo.save()
-    return JsonResponse({'success': True})
-
-@login_requerido
-@require_POST
-def eliminar_equipo(request):
-    equipo_id = request.POST.get('equipo_id')
-    equipo = Equipo.objects.get(nombre=equipo_id, usuario__id=request.session['usuario_id'])
-    equipo.delete()
-    return JsonResponse({'success': True})
 
 @login_requerido
 @require_POST
@@ -284,7 +201,6 @@ def toggle_favorito(request):
 
 # views.py
 from dotenv import load_dotenv
-import os
 
 
 load_dotenv()
@@ -330,32 +246,42 @@ from django.views.decorators.http import require_POST
 
 
 
-@login_requerido
-@require_POST
-def toggle_wallpaper_favorito(request):
-    usuario = Usuario.objects.get(id=request.session['usuario_id'])
-    wallpaper_id = request.POST.get('wallpaper_id')
-    if not wallpaper_id:
-        return JsonResponse({'success': False, 'error': 'No se proporcionó wallpaper_id.'})
-
-    favoritos = usuario.wallpapers_favoritos or []
-    if wallpaper_id in favoritos:
-        favoritos.remove(wallpaper_id)
-        action = 'removed'
-    else:
-        favoritos.append(wallpaper_id)
-        action = 'added'
-    usuario.wallpapers_favoritos = favoritos
-    usuario.save()
-    return JsonResponse({'success': True, 'action': action})
 
 
 # wallpapers favoritos en vista perfil 
 @login_requerido
 def perfil(request):
     usuario = Usuario.objects.get(id=request.session['usuario_id'])
-    wallpapers_favoritos = usuario.wallpapers_favoritos or []
+    favoritos_ids = usuario.wallpapers_favoritos or []
+    wallpapers_favoritos = []
+
+    # Si usas Pexels o una API externa
+    PEXELS_API_KEY = os.getenv("PEXELS_API_KEY")
+    headers = {'Authorization': PEXELS_API_KEY}
+
+    for wid in favoritos_ids:
+        # Suponiendo que wid es el ID de la foto en Pexels
+        url = f'https://api.pexels.com/v1/photos/{wid}'
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            wallpapers_favoritos.append(response.json())
+
     return render(request, 'perfil.html', {
         'usuario': usuario,
         'wallpapers_favoritos': wallpapers_favoritos,
     })
+
+@login_requerido
+@require_POST
+
+def toggle_wallpaper_favorito(request, wallpaper_id):
+    usuario = Usuario.objects.get(id=request.session['usuario_id'])
+    favoritos = usuario.wallpapers_favoritos or []
+    wallpaper_id = int(wallpaper_id)
+    if wallpaper_id in favoritos:
+        favoritos.remove(wallpaper_id)
+    else:
+        favoritos.append(wallpaper_id)
+    usuario.wallpapers_favoritos = favoritos
+    usuario.save()
+    return redirect('perfil')

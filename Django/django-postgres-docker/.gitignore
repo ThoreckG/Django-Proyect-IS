@@ -1,0 +1,54 @@
+# Bytecode de Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Archivos de entorno virtual
+env/
+venv/
+.venv/
+ENV/
+.Python
+
+# Configuraciones locales de VS Code
+.vscode/
+*.code-workspace
+
+# Archivos de entorno y secretos
+*.env
+.env.*
+
+# Base de datos local
+*.sqlite3
+*.db
+
+# Archivos de log
+*.log
+
+# Archivos temporales del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos de migraciones (si no quieres subirlos todos)
+**/migrations/*.py
+!**/migrations/__init__.py
+
+# Archivos de pruebas, cachés y compilados
+*.pot
+*.pyc
+*.mo
+
+# Docker
+*.pid
+*.sock
+docker-compose.override.yml
+
+# Archivos de despliegue o CI/CD temporales
+*.tar
+*.zip
+
+# Otros
+coverage.xml
+htmlcov/
+dist/
+build/

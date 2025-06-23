@@ -21,234 +21,31 @@
                             <hr>
                             <h4>Wallpapers Favoritos</h4>
                             <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-2">
-                                {% for wp in wallpapers_favoritos %}
-                                <div class="col">
-                                    <div class="card h-100 shadow-sm">
-                                        <img src="{{ wp.src }}" class="card-img-top" alt="Wallpaper favorito">
-                                        <div class="card-body p-2 text-center">
-                                            <h6 class="card-title mb-2" style="font-size: 0.95rem;">{{ wp.photographer }}</h6>
-                                            <a href="{{ wp.original }}" target="_blank" class="btn btn-success btn-sm mb-1">Ver original</a>
-                                            <button class="btn btn-danger btn-sm btn-quitar-wallpaper-fav" data-wpid="{{ wp.id }}">
-                                                Quitar de Favoritos
-                                            </button>
+                                <!-- Ejemplo para mostrar cada wallpaper favorito -->
+                                    {% for wallpaper in wallpapers_favoritos %}
+                                    <div class="card">
+                                        <img src="{{ wallpaper.src.medium }}" alt="{{ wallpaper.photographer }}">
+                                        <div class="card-body">
+                                        <h5 class="card-title">{{ wallpaper.photographer }}</h5>
+                                        <a href="{{ wallpaper.src.original }}" class="btn btn-success">Ver original</a>
+                                            <form method="post" action="{% url 'toggle_wallpaper_favorito' wallpaper.id %}">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-danger btn-quitar-wallpaper-fav">Quitar de Favoritos</button>
+                                            </form>
                                         </div>
-                                    </div>
+                                      </div>
+                                    {% empty %}
+                                    <p>No tienes wallpapers favoritos aún.</p>
+                                    {% endfor %}
                                 </div>
-                                {% empty %}
-                                <div>No tienes wallpapers favoritos aún.</div>
-                                {% endfor %}
-                            </div>
                             <!-- ...existing code... -->
 
-                            <script>
-                                // Quitar de favoritos para wallpapers
-                                $('.btn-quitar-wallpaper-fav').click(function (e) {
-                                    e.preventDefault();
-                                    var btn = $(this);
-                                    var wp_id = btn.data('wpid');
-                                    $.post("{% url 'toggle_wallpaper_favorito' %}", {
-                                        wallpaper_id: wp_id,
-                                        csrfmiddlewaretoken: '{{ csrf_token }}'
-                                    }, function (data) {
-                                        if (data.success && data.action === 'removed') {
-                                            btn.closest('.col').remove();
-                                        }
-                                    });
-                                });
-                            </script>
-                        <!-- ... -->
-                        <h4>Equipos</h4>
-                        {% if equipos %}
-                        {% for equipo in equipos %}
-                        <div class="mb-4" style="border-radius: 0.5rem; border: solid 1px black; padding: 0.75rem;">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <h5 class="text-start mb-0">{{ equipo.nombre }}</h5>
-                                <div>
-                                    <button class="btn btn-outline-secondary btn-sm btn-cambiar-nombre"
-                                        data-equipoid="{{ equipo.nombre }}">Cambiar nombre</button>
-                                    <button class="btn btn-outline-danger btn-sm btn-eliminar-equipo"
-                                        data-equipoid="{{ equipo.nombre }}">Eliminar equipo</button>
-                                </div>
-                            </div>
-                            <div class="row row-cols-6 g-2">
-                                {% for poke in equipo.pokemones %}
-                                <div class="col">
-                                    <a href="{% url 'pokemon_detalle' poke.id %}"
-                                        style="text-decoration: none; color: inherit;">
-                                        <div class="card h-100 book-card shadow-sm">
-                                            <img src="{{ poke.image }}" class="card-img-top book-cover pokemon-link"
-                                                alt="Img Pokemon">
-                                            <div class="card-body p-2">
-                                                <h6 class="card-title mb-1" style="font-size: 1rem;">N.º {{ poke.id }}:
-                                                    {{ poke.name|capfirst }}</h6>
-                                                <p class="card-text mb-1" style="font-size: 0.9rem;">
-                                                    Tipos:
-                                                    {% for tipo in poke.types %}
-                                                    <span class="badge"
-                                                        style="background-color: var(--{{ tipo|lower }});">{{ tipo }}</span>
-                                                    {% endfor %}
-                                                </p>
-                                                <button class="btn btn-danger btn-sm btn-quitar-equipo"
-                                                    data-equipoid="{{ equipo.nombre }}" data-pokeid="{{ poke.id }}"
-                                                    title="Quitar del equipo">Quitar</button>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                                {% empty %}
-                                <div class="col">Equipo vacío</div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                        {% endfor %}
-                        {% else %}
-                        <div>No tienes equipos aún.</div>
-                        {% endif %}
-                        <a href="/" class="btn btn-primary mt-3">Volver al inicio</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                     
 
-    <!-- Modal para agregar a equipo -->
-    <div class="modal fade" id="modalAgregarEquipo" tabindex="-1" aria-labelledby="modalAgregarEquipoLabel"
-        aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form id="form-agregar-equipo">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modalAgregarEquipoLabel">Agregar a Equipo</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                    </div>
-                    <div class="modal-body">
-                        <input type="hidden" name="poke_id" id="modal-poke-id">
-                        <div class="mb-3">
-                            <label for="equipo-select" class="form-label">Selecciona un equipo</label>
-                            <select class="form-select" id="equipo-select" name="equipo_id">
-                                {% if usuario.equipos.all %}
-                                {% for equipo in usuario.equipos.all %}
-                                <option value="{{ equipo.id }}">{{ equipo.nombre }} ({{ equipo.pokemones|length }}/6)
-                                </option>
-                                {% endfor %}
-                                {% else %}
-                                <option value="" disabled selected>No tienes equipos aún</option>
-                                {% endif %}
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="nuevo-equipo" class="form-label">O crea un nuevo equipo</label>
-                            <input type="text" class="form-control" id="nuevo-equipo" name="nuevo_equipo"
-                                placeholder="Nombre del nuevo equipo">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Agregar</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Quitar de favoritos
-        $('.btn-quitar-fav').click(function (e) {
-            e.preventDefault();
-            var btn = $(this);
-            var poke_id = btn.data('pokeid');
-            $.post("{% url 'toggle_favorito' %}", {
-                poke_id: poke_id,
-                csrfmiddlewaretoken: '{{ csrf_token }}'
-            }, function (data) {
-                if (data.success && data.action === 'removed') {
-                    btn.closest('.col').remove();
-                }
-            });
-        });
-
-        // Cuando se abre el modal, coloca el poke_id
-        $('.btn-agregar-equipo').click(function () {
-            let pokeId = $(this).data('pokeid');
-            let pokeName = $(this).data('pokename');
-            $('#modal-poke-id').val(pokeId);
-            $('#modalAgregarEquipoLabel').text('Agregar a ' + pokeName + ' al equipo');
-        });
-
-        // Al enviar el formulario
-        $('#form-agregar-equipo').submit(function (e) {
-            e.preventDefault();
-            let poke_id = $('#modal-poke-id').val();
-            let equipo_id = $('#equipo-select').val();
-            let nuevo_equipo = $('#nuevo-equipo').val();
-
-            if (!equipo_id && !nuevo_equipo) {
-                alert('Selecciona un equipo o ingresa un nombre para crear uno nuevo.');
-                return;
-            }
-
-            $.post("{% url 'agregar_a_equipo' %}", {
-                poke_id: poke_id,
-                equipo_id: equipo_id,
-                nuevo_equipo: nuevo_equipo,
-                csrfmiddlewaretoken: '{{ csrf_token }}'
-            }, function (data) {
-                if (data.success) {
-                    if (nuevo_equipo) {
-                        alert('¡Pokémon agregado al nuevo equipo!');
-                        location.reload();
-                    } else {
-                        alert('¡Pokémon agregado al equipo!');
-                        location.reload();
-                    }
-                } else {
-                    alert(data.error || 'Ocurrió un error');
-                }
-            });
-        });
-
-        // Cambiar nombre del equipo
-        $('.btn-cambiar-nombre').click(function (e) {
-            e.preventDefault();
-            var btn = $(this);
-            var equipo_id = btn.data('equipoid');
-            var nuevo_nombre = prompt('Nuevo nombre del equipo:');
-            if (nuevo_nombre) {
-                $.post("{% url 'cambiar_nombre_equipo' %}", {
-                    equipo_id: equipo_id,
-                    nuevo_nombre: nuevo_nombre,
-                    csrfmiddlewaretoken: '{{ csrf_token }}'
-                }, function (data) {
-                    if (data.success) {
-                        location.reload();
-                    } else {
-                        alert(data.error || 'Ocurrió un error');
-                    }
-                });
-            }
-        });
-
-        // Eliminar equipo
-        $('.btn-eliminar-equipo').click(function (e) {
-            e.preventDefault();
-            var btn = $(this);
-            var equipo_id = btn.data('equipoid');
-            if (confirm('¿Seguro que quieres eliminar este equipo?')) {
-                $.post("{% url 'eliminar_equipo' %}", {
-                    equipo_id: equipo_id,
-                    csrfmiddlewaretoken: '{{ csrf_token }}'
-                }, function (data) {
-                    if (data.success) {
-                        location.reload();
-                    } else {
-                        alert(data.error || 'Ocurrió un error');
-                    }
-                });
-            }
-        });
-    </script>
-
+    
 </body>
 
 </html>

@@ -58,10 +58,13 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
 <script>
 document.querySelectorAll('.wallpaper-fav-btn').forEach(btn => {
     btn.addEventListener('click', function() {
-        fetch("{% url 'toggle_wallpaper_favorito' %}", {
+        // Reemplaza el 0 por el id real del wallpaper
+        const url = "{% url 'toggle_wallpaper_favorito' 0 %}".replace('0', btn.dataset.id);
+        fetch(url, {
             method: "POST",
             headers: {
                 "X-CSRFToken": "{{ csrf_token }}",
