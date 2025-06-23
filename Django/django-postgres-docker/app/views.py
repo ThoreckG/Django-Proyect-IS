@@ -10,6 +10,7 @@ from django.http import JsonResponse
 import requests
 from django.conf import settings
 import os
+import random
 
 def login_requerido(vista_func):
     @wraps(vista_func)
@@ -163,12 +164,15 @@ def wallpapers(request):
     query = request.GET.get('search', '')
     headers = {'Authorization': PEXELS_API_KEY}
     if query:
-        url = f'https://api.pexels.com/v1/search?query={query}&per_page=4'
+        url = f'https://api.pexels.com/v1/search?query={query}&per_page=104'
     else:
-        url = 'https://api.pexels.com/v1/curated?per_page=16'
+        url = 'https://api.pexels.com/v1/curated?per_page=104'
     response = requests.get(url, headers=headers)
     data = response.json() if response.status_code == 200 else {}
     wallpapers = data.get('photos', [])
+
+    # Barajar wallpapers para orden aleatorio en cada recarga
+    random.shuffle(wallpapers)
 
     usuario = None
     usuario_id = request.session.get('usuario_id')
