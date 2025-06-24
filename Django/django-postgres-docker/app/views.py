@@ -147,17 +147,11 @@ def registrar_usuario(request):
 from dotenv import load_dotenv
 
 
-load_dotenv()
-PEXELS_API_KEY = os.getenv("PEXELS_API_KEY")
-
-
-
-
-
 from django.shortcuts import render
 
 
 load_dotenv()
+
 PEXELS_API_KEY = os.getenv("PEXELS_API_KEY")
 
 def wallpapers(request):
@@ -232,3 +226,42 @@ def toggle_wallpaper_favorito(request, wallpaper_id):
     usuario.wallpapers_favoritos = favoritos
     usuario.save()
     return redirect('perfil')
+
+
+
+import os
+import random
+import requests
+from django.shortcuts import render
+from .models import Usuario
+
+def index(request):
+    PEXELS_API_KEY = os.getenv("PEXELS_API_KEY")
+    headers = {'Authorization': PEXELS_API_KEY}
+
+    temas = {
+        "naturaleza": "nature",
+        "tecnologia": "technology",
+        "arte": "art"
+    }
+    imagenes = {}
+
+    for key, query in temas.items():
+        url = f'https://api.pexels.com/v1/search?query={query}&per_page=30'
+        response = requests.get(url, headers=headers)
+        data = response.json() if response.status_code == 200 else {}
+        fotos = data.get('photos', [])
+        if fotos:
+            imagenes[key] = random.choice(fotos)['src']['large']
+        else:
+            imagenes[key] = ""  # O una imagen por defecto
+
+    usuario = Usuario.objects.get(id=request.session['usuario_id'])
+
+    context = {
+        "usuario": usuario,
+        "naturaleza_img": imagenes["naturaleza"],
+        "tecnologia_img": imagenes["tecnologia"],
+        "arte_img": imagenes["arte"],
+    }
+    return render(request, "index.html", context)

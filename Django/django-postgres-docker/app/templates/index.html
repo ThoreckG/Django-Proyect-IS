@@ -4,25 +4,52 @@
 
 {% include 'head.html' %}
 
-
-<body>
+<body >
     {% include 'navbar.html' %}
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card shadow text-center">
-                    <div class="card-body p-5">
-                        <h3 class="card-title">¡Hola, {{ usuario.nombre }}!</h3>
-                        <p class="card-text">Bienvenido a la aplicación. Aquí puedes navegar entre las funciones
-                            disponibles.</p>
-                        {% if usuario.rol == 1 %}
-                        <a href="/dashboard" class="btn btn-success mb-2">Ir al Dashboard</a>
-                        {% endif %}
-                        <a href="/pokemon" class="btn btn-primary mb-2">Ver Pokemon</a>
-                        <a href="/perfil" class="btn btn-warning mb-2">Mi Perfil</a>
-                        <div class="d-flex mt-2 justify-content-center">
-                            <a href="/logout" class="btn btn-danger">Cerrar sesión</a>
-                        </div>
+    <div class="container py-5">
+        <!-- Jumbotron style welcome -->
+        <div class=" rounded-3  p-5 mb-5 text-center">
+            <h1 class="fw-bold mb-3 text-light">Bienvenido {{ usuario.nombre }}.</h1>
+            <p class="lead mb-4 text-light">
+                Bienvenido a la Wallpapers.
+            </p>
+            {% if usuario.rol == 1 %}
+            <a href="/dashboard" class="btn btn-success mb-2">Dashboard</a>
+            {% endif %} 
+            <a href="/perfil" class="btn btn-warning mb-2">Mi Perfil</a>
+            <div class="d-flex mt-2 justify-content-center">
+                <a href="/logout" class="btn btn-danger">Cerrar sesión</a>
+            </div>
+        </div>
+
+        <!-- Features grid -->
+        <h3 class="mb-4 text-light">Te podría interesar esto</h3>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 shadow position-relative">
+                    <img src="{{ naturaleza_img }}" class="img-fluid rounded-top" alt="Naturaleza"
+                     style="height: 250px; width: 100%; object-fit: cover;">
+                    <div class="p-3 d-flex flex-column align-items-center justify-content-center">
+                        <span class="badge bg-success mb-2">Naturaleza</span>
+                        <h5 class="fw-bold text-light">Montañas y lagos</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 shadow position-relative">
+                    <img src="{{ tecnologia_img }}" class="img-fluid rounded-top" alt="Tecnología"style="height: 250px; width: 100%; object-fit: cover;">
+                    <div class="p-3 d-flex flex-column align-items-center justify-content-center">
+                        <span class="badge bg-warning mb-2">Tecnología</span>
+                        <h5 class="fw-bold text-light">tecnologia</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 shadow position-relative">
+                    <img src="{{ arte_img }}" class="img-fluid " alt="Arte"style="height: 250px; width: 100%; object-fit: cover;">
+                    <div class="p-3 d-flex flex-column align-items-center justify-content-center">
+                        <span class="badge bg-danger mb-2">Arte</span>
+                        <h5 class="fw-bold text-light">Obra creativa</h5>
                     </div>
                 </div>
             </div>

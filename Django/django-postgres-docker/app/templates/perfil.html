@@ -13,7 +13,7 @@
             <div class="col-md-6" style="padding: 1.5rem; width: 100%;">
                 <div class="card shadow text-center">
                     <div class="card-body p-5">
-                        <h2 class="card-title">Perfil de {{ usuario.nombre }}</h2>
+                        <h2 class="card-title">Usuario: {{ usuario.nombre }}</h2>
                         <p><strong>Correo:</strong> {{ usuario.correo }}</p>
                         <a href="/" class="btn btn-primary">Volver al inicio</a>
                         <!-- ... -->
@@ -35,7 +35,9 @@
                                         </div>
                                       </div>
                                     {% empty %}
-                                    <p>No tienes wallpapers favoritos aún.</p>
+<div class="d-flex justify-content-center align-items-center" style="min-height:150px; width:100%;">
+    <p class="text-center w-100">No tienes wallpapers favoritos aún.</p>
+</div>
                                     {% endfor %}
                                 </div>
                             <!-- ...existing code... -->
