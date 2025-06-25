@@ -235,6 +235,7 @@ import random
 import requests
 from django.shortcuts import render
 from .models import Usuario
+
 def index(request):
     usuario_id = request.session.get('usuario_id')
     if not usuario_id:
@@ -269,3 +270,17 @@ def index(request):
         "arte_img": imagenes["arte"],
     }
     return render(request, "index.html", context)
+
+
+
+
+
+from django.http import HttpResponseNotFound
+
+def eliminar_usuario(request, usuario_id):
+    try:
+        usuario = Usuario.objects.get(id=usuario_id)
+        usuario.delete()
+        return redirect('dashboard')
+    except Usuario.DoesNotExist:
+        return HttpResponseNotFound("El usuario no existe.")
