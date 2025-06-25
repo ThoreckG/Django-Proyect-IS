@@ -284,3 +284,19 @@ def eliminar_usuario(request, usuario_id):
         return redirect('dashboard')
     except Usuario.DoesNotExist:
         return HttpResponseNotFound("El usuario no existe.")
+    
+    from django.shortcuts import render, get_object_or_404, redirect
+
+
+from django.shortcuts import render, get_object_or_404, redirect
+
+def editar_usuario(request, usuario_id):
+    usuario = get_object_or_404(Usuario, id=usuario_id)
+    if request.method == 'POST':
+        usuario.nombre = request.POST['nombre']
+        usuario.correo = request.POST['correo']
+        if request.POST['contraseña']:
+            usuario.contraseña = request.POST['contraseña']  # Asegúrate de hashear la contraseña si es necesario
+        usuario.save()
+        return redirect('dashboard')  # O la vista que corresponda
+    return render(request, 'editar_usuario.html', {'usuario': usuario})

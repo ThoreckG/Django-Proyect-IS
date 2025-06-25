@@ -17,10 +17,7 @@
             
         </div>
 
-       
-
-       
-
+    
         <!-- Contador de usuarios -->
         <div class="mb-3">
             <span class="badge bg-success">Total: {{ usuarios|length }}</span>
@@ -46,7 +43,7 @@
                     <td>••••••••</td>
                     <td>{{ u.rol }}</td>
                     <td>
-                        <a href="#" class="btn btn-sm btn-primary">Editar</a>
+                        <a href="#" class="btn btn-sm btn-primary" onclick="abrirEditarUsuario({{ u.id }}); return false;">Editar</a>
                         <a href="{% url 'eliminar_usuario' u.id %}" class="btn btn-sm btn-danger" onclick="return confirm('¿Seguro que deseas eliminar este usuario?');">Eliminar</a>
                     </td>
                 </tr>
@@ -59,7 +56,69 @@
         </table>
     </div>
 
+<!-- Modal para editar usuario -->
+<div class="modal fade" id="editarUsuarioModal" tabindex="-1" aria-labelledby="editarUsuarioModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editarUsuarioModalLabel">Editar Usuario</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body" id="editarUsuarioModalBody">
+        <!-- Aquí se cargará el formulario por AJAX -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function abrirEditarUsuario(usuarioId) {
+    fetch(`/editar-usuario/${usuarioId}/`)
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('editarUsuarioModalBody').innerHTML = html;
+        var modal = new bootstrap.Modal(document.getElementById('editarUsuarioModal'));
+        modal.show();
+        
+        // Agregar event listener para el formulario
+        const form = document.querySelector('#editarUsuarioModalBody form');
+        if (form) {
+          form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            guardarCambiosUsuario(this, usuarioId);
+          });
+        }
+      });
+}
+
+function guardarCambiosUsuario(form, usuarioId) {
+    const formData = new FormData(form);
     
+    fetch(`/editar-usuario/${usuarioId}/`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            // Cerrar modal y recargar página para mostrar cambios
+            bootstrap.Modal.getInstance(document.getElementById('editarUsuarioModal')).hide();
+            location.reload();
+        } else {
+            return response.text().then(html => {
+                // Mostrar errores del formulario
+                document.getElementById('editarUsuarioModalBody').innerHTML = html;
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Ocurrió un error al guardar los cambios');
+    });
+}
+</script>
 </body>
 
 </html>

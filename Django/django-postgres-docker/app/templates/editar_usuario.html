@@ -1,0 +1,28 @@
+{% load static %}
+<!-- filepath: app/templates/editar_usuario.html -->
+<form method="post" id="editarUsuarioForm">
+  {% csrf_token %}
+  <input type="hidden" name="usuario_id" id="usuario_id" value="{{ usuario.id }}">
+  <div class="form-outline mb-4">
+    <input type="text" name="nombre" id="nombre" class="form-control" placeholder="Ingresa tu nombre" value="{{ usuario.nombre }}" required>
+    <label class="form-label" for="nombre">Nombre</label>
+  </div>
+  <div class="form-outline mb-4">
+    <input type="email" name="correo" id="correo" class="form-control" placeholder="Ingresa tu correo" value="{{ usuario.correo }}" required>
+    <label class="form-label" for="correo">Correo electrónico</label>
+  </div>
+  <!-- Puedes dejar los campos de contraseña vacíos para que solo se cambien si el usuario los llena -->
+  <div class="form-outline mb-4">
+    <input type="password" name="contraseña" id="contraseña" class="form-control" placeholder="Crea una contraseña">
+    <label class="form-label" for="contraseña">Contraseña</label>
+  </div>
+  <div class="form-outline mb-4">
+    <input type="password" name="confirmar_contraseña" id="confirmar_contraseña" class="form-control" placeholder="Confirma contraseña">
+    <label class="form-label" for="confirmar_contraseña">Confirmar contraseña</label>
+  </div>
+  <div class="text-center pt-1 mb-4">
+    <input type="submit" class="btn btn-primary btn-block gradient-custom-2 mb-3" value="Guardar cambios">
+  </div>
+</form>
+
+

@@ -17,7 +17,7 @@ urlpatterns = [
     path('wallpapers/', views.wallpapers, name='wallpapers'),
     path('toggle-wallpaper-favorito/<int:wallpaper_id>/', views.toggle_wallpaper_favorito, name='toggle_wallpaper_favorito'),
     path('eliminar-usuario/<int:usuario_id>/', views.eliminar_usuario, name='eliminar_usuario'),
-
+    path('editar-usuario/<int:usuario_id>/', views.editar_usuario, name='editar_usuario'),
     
 # ...existing code...
     # Administradores
