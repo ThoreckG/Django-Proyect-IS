@@ -11,4 +11,12 @@ docker-compose exec web python manage.py migrate
 despues escribir: 
 docker-compose up --build
 
+
+Crear Administrador (desde terminal):
+
+ sh
+   docker-compose up --build
+
+
+   
 ir al localhost8080

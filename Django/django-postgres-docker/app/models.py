@@ -13,19 +13,4 @@ class Usuario(models.Model):
     
 
 
-class Equipo(models.Model):
-    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='equipos')
-    nombre = models.CharField(max_length=100)
-    # Lista de nombres o IDs de Pokémon (máximo 6)
-    pokemones = models.JSONField(default=list, blank=True)
-
-    def save(self, *args, **kwargs):
-        if len(self.pokemones) > 6:
-            raise ValueError("Un equipo no puede tener más de 6 Pokémon.")
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return f"{self.nombre} ({self.usuario.nombre})"
-    
-
 

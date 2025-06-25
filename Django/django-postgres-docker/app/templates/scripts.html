@@ -76,3 +76,12 @@ document.querySelectorAll('.wallpaper-fav-btn').forEach(btn => {
 });
 </script>
 
+<script>
+    const popAudio = document.getElementById('pop-audio');
+    document.querySelectorAll('.wallpaper-card').forEach(card => {
+        card.addEventListener('mouseenter', () => {
+            popAudio.currentTime = 0;
+            popAudio.play();
+        });
+    });
+</script>

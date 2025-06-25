@@ -11,7 +11,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-6" style="padding: 1.5rem; width: 100%;">
-                <div class="card shadow text-center">
+                <div class="card shadow text-center perfil-card" >
                     <div class="card-body p-5">
                         <h2 class="card-title">Usuario: {{ usuario.nombre }}</h2>
                         <p><strong>Correo:</strong> {{ usuario.correo }}</p>
@@ -20,34 +20,30 @@
                         <!-- ...existing code... -->
                             <hr>
                             <h4>Wallpapers Favoritos</h4>
-                            <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-2">
-                                <!-- Ejemplo para mostrar cada wallpaper favorito -->
-                                    {% for wallpaper in wallpapers_favoritos %}
-                                    <div class="card">
-                                        <img src="{{ wallpaper.src.medium }}" alt="{{ wallpaper.photographer }}">
-                                        <div class="card-body">
-                                        <h5 class="card-title">{{ wallpaper.photographer }}</h5>
-                                        <a href="{{ wallpaper.src.original }}" class="btn btn-success">Ver original</a>
-                                            <form method="post" action="{% url 'toggle_wallpaper_favorito' wallpaper.id %}">
-                                                {% csrf_token %}
-                                                <button type="submit" class="btn btn-danger btn-quitar-wallpaper-fav">Quitar de Favoritos</button>
-                                            </form>
+                            <div class="row g-4" id="wallpaper-row">
+                                {% for wp in wallpapers_favoritos %}
+                                    <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-3 wallpaper-card" data-wpid="{{ wp.id }}">
+                                        <div class="card h-100 position-relative" style="max-width: 160px; margin: 0 auto;">
+                                            <img src="{{ wp.src.medium }}" class="card-img-top" alt="{{ wp.photographer }}" style="height:110px; object-fit:cover;">
+                                            <div class="card-body text-center p-2">
+                                                <h6 class="card-title mb-2" style="font-size: 0.95rem;">Fotógrafo: {{ wp.photographer }}</h6>
+                                                <a href="{{ wp.src.original }}" target="_blank" class="btn btn-success btn-sm mb-1">Ver original</a>
+                                                <form method="post" action="{% url 'toggle_wallpaper_favorito' wp.id %}" style="display:inline;">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-danger btn-sm mb-1">Quitar de Favoritos</button>
+                                                </form>
+                                            </div>
                                         </div>
-                                      </div>
-                                    {% empty %}
-<div class="d-flex justify-content-center align-items-center" style="min-height:150px; width:100%;">
-    <p class="text-center w-100">No tienes wallpapers favoritos aún.</p>
-</div>
-                                    {% endfor %}
-                                </div>
+                                    </div>
+                                {% empty %}
+                                    <div class="col-12">
+                                        <p class="text-center">No tienes wallpapers favoritos aún.</p>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                                
                             <!-- ...existing code... -->
 
-                     
 
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    
 </body>
-
 </html>

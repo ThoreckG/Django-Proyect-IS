@@ -115,4 +115,27 @@ body {
 }
 .card {
     transition: transform 0.2s, box-shadow 0.2s;
+    background: transparent !important;
+    box-shadow: none !important; /* Opcional: quita la sombra si quieres */
+    border: none !important;     /* Opcional: quita el borde si quieres */
 }
+
+/* Aplica fondo semitransparente solo en modo oscuro */
+body.dark-mode .wallpaper-row-bg {
+    background: rgba(30, 30, 30, 0.7); /* Ajusta el color y opacidad según prefieras */
+    border-radius: 12px;
+    padding: 16px 0;
+}
+
+/* Por defecto, texto oscuro */
+.card-title-color {
+    color: #222 !important;
+}
+
+/* En modo oscuro, texto claro */
+body.dark-mode .card-title-color {
+    color: #fff !important;
+}
+
+
+

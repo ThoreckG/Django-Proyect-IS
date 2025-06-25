@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import Usuario, Equipo
+from .models import Usuario
 from functools import wraps
 from django.shortcuts import redirect
 from django.http import JsonResponse
@@ -12,11 +12,12 @@ from django.conf import settings
 import os
 import random
 
+
 def login_requerido(vista_func):
     @wraps(vista_func)
     def wrapper(request, *args, **kwargs):
         if not request.session.get('usuario_id'):
-            return redirect('wallpapers')
+            return redirect('login')
         return vista_func(request, *args, **kwargs)
     return wrapper
 
@@ -212,9 +213,9 @@ def perfil(request):
         'wallpapers_favoritos': wallpapers_favoritos,
     })
 
+
 @login_requerido
 @require_POST
-
 def toggle_wallpaper_favorito(request, wallpaper_id):
     usuario = Usuario.objects.get(id=request.session['usuario_id'])
     favoritos = usuario.wallpapers_favoritos or []
@@ -234,8 +235,11 @@ import random
 import requests
 from django.shortcuts import render
 from .models import Usuario
-
 def index(request):
+    usuario_id = request.session.get('usuario_id')
+    if not usuario_id:
+        return redirect('login')  # Redirige al login si no hay sesión
+
     PEXELS_API_KEY = os.getenv("PEXELS_API_KEY")
     headers = {'Authorization': PEXELS_API_KEY}
 
@@ -256,7 +260,7 @@ def index(request):
         else:
             imagenes[key] = ""  # O una imagen por defecto
 
-    usuario = Usuario.objects.get(id=request.session['usuario_id'])
+    usuario = Usuario.objects.get(id=usuario_id)
 
     context = {
         "usuario": usuario,

@@ -15,7 +15,7 @@ urlpatterns = [
     path('logout/', views.logout, name='logout'),
     path('perfil/', views.perfil, name='perfil'),
     path('wallpapers/', views.wallpapers, name='wallpapers'),
-   path('toggle-wallpaper-favorito/<int:wallpaper_id>/', views.toggle_wallpaper_favorito, name='toggle_wallpaper_favorito'),
+    path('toggle-wallpaper-favorito/<int:wallpaper_id>/', views.toggle_wallpaper_favorito, name='toggle_wallpaper_favorito'),
   
     # Administradores
     # path('admin/dashboard/', views.dashboard_usuarios, name='dashboard_usuarios'),
